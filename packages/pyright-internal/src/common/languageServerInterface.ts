@@ -50,6 +50,7 @@ export interface ServerSettings {
     functionSignatureDisplay?: SignatureDisplayType | undefined;
     inlayHints?: InlayHintSettings;
     useTypingExtensions?: boolean;
+    maxWorkers?: number | undefined;
 
     fileEnumerationTimeoutInSec?: number | undefined;
 }

@@ -9,7 +9,7 @@ The basedpyright language server honors the following settings.
 
 **basedpyright.disableLanguageServices** [boolean]: Disables all language services. This includes hover text, type completion, signature completion, find definition, find references, etc. This option is useful if you want to use pyright only as a type checker but want to run another Python language server for language service features.
 
-**basedpyright.disableOrganizeImports** [boolean]: Disables the “Organize Imports” command. This is useful if you are using another extension that provides similar functionality and you don’t want the two extensions to fight each other.
+**basedpyright.disableOrganizeImports** [boolean]: Disables the "Organize Imports" command. This is useful if you are using another extension that provides similar functionality and you don't want the two extensions to fight each other.
 
 **basedpyright.disableTaggedHints** [boolean]: Disables the use of hint diagnostics with special tags to tell the client to display text ranges in a "grayed out" manner (to indicate unreachable code or unreferenced symbols) or in a "strike through" manner (to indicate use of a deprecated feature).
 
@@ -28,7 +28,7 @@ The basedpyright language server honors the following settings.
 
 **basedpyright.analysis.logLevel** ["Error", "Warning", "Information", or "Trace"]: Level of logging for Output panel. The default value for this option is "Information".
 
-**python.pythonPath** [path]: Path to Python interpreter. if you're using vscode, this setting is being deprecated by the VS Code Python extension in favor of a setting that is stored in the Python extension’s internal configuration store. Pyright supports both mechanisms but prefers the new one if both settings are present.
+**python.pythonPath** [path]: Path to Python interpreter. if you're using vscode, this setting is being deprecated by the VS Code Python extension in favor of a setting that is stored in the Python extension's internal configuration store. Pyright supports both mechanisms but prefers the new one if both settings are present.
 
 **python.venvPath** [path]: Path to folder with subdirectories that contain virtual environments. The `python.pythonPath` setting is recommended over this mechanism for most users. For more details, refer to the [import resolution](../usage/import-resolution.md#configuring-your-python-environment) documentation.
 
@@ -60,6 +60,8 @@ the following settings are exclusive to basedpyright
 **basedpyright.analysis.useTypingExtensions** [boolean]: Whether to rely on imports from the `typing_extensions` module when targeting older versions of python that do not include certain typing features such as the `@override` decorator. Defaults to `false`. [more info](../benefits-over-pyright/language-server-improvements.md#autocomplete-improvements)
 
 **basedpyright.analysis.fileEnumerationTimeout** [integer]: Timeout (in seconds) for file enumeration operations. When basedpyright scans your workspace files, it can take a long time in some workspaces. This setting controls when to show a "slow enumeration" warning. Default is 10 seconds.
+
+**basedpyright.analysis.maxWorkers** [integer | "auto"]: Number of background analysis workers to use for type checking. Higher values can improve performance on multi-core systems but use more memory. Set to "auto" to automatically detect the optimal number based on CPU cores. Defaults to 1 for backwards compatibility.
 
 ### discouraged settings
 
@@ -104,7 +106,8 @@ the basedpyright language server settings can be configured using a workspace or
 
 ```json title="./.vscode/settings.json"
 {
-    "basedpyright.analysis.diagnosticMode": "openFilesOnly"
+    "basedpyright.analysis.diagnosticMode": "openFilesOnly",
+    "basedpyright.analysis.maxWorkers": "auto"
 }
 ```
 
@@ -118,6 +121,7 @@ require("lspconfig").basedpyright.setup {
     basedpyright = {
       analysis = {
         diagnosticMode = "openFilesOnly",
+        maxWorkers = "auto",
         inlayHints = {
           callArgumentNames = true
         }
@@ -136,6 +140,7 @@ args = ["--stdio"]
 
 [language-server.basedpyright.config]
 basedpyright.analysis.diagnosticMode = "openFilesOnly"
+basedpyright.analysis.maxWorkers = "auto"
 ```
 
 ### zed
@@ -154,7 +159,8 @@ basedpyright.analysis.diagnosticMode = "openFilesOnly"
                     "pythonPath": ".venv/bin/python"
                 },
                 "basedpyright.analysis": {
-                    "diagnosticMode": "openFilesOnly"
+                    "diagnosticMode": "openFilesOnly",
+                    "maxWorkers": "auto"
                 }
             }
         }

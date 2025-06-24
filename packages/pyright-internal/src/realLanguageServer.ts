@@ -128,6 +128,7 @@ export abstract class RealLanguageServer extends LanguageServerBase {
                 genericTypes: false,
             },
             useTypingExtensions: false,
+            maxWorkers: 1, // Default to 1 worker for backwards compatibility
         };
 
         try {
@@ -226,6 +227,18 @@ export abstract class RealLanguageServer extends LanguageServerBase {
 
                 if (pythonAnalysisSection.fileEnumerationTimeout !== undefined) {
                     serverSettings.fileEnumerationTimeoutInSec = pythonAnalysisSection.fileEnumerationTimeout;
+                }
+
+                if (pythonAnalysisSection.maxWorkers !== undefined) {
+                    const maxWorkers = pythonAnalysisSection.maxWorkers;
+                    if (typeof maxWorkers === 'number' && maxWorkers >= 1) {
+                        serverSettings.maxWorkers = Math.floor(maxWorkers);
+                    } else if (typeof maxWorkers === 'string' && maxWorkers.toLowerCase() === 'auto') {
+                        // Auto-detect CPU count, similar to CLI behavior
+                        const os = require('os');
+                        const cpuCount = os.cpus().length;
+                        serverSettings.maxWorkers = cpuCount < 4 ? 1 : cpuCount;
+                    }
                 }
 
                 const inlayHintSection = pythonAnalysisSection.inlayHints;
